@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Post } from './entities/post.entity'
 import { In, Like, Repository } from 'typeorm'
 import { Topic } from 'src/topic/entities/topic.entity'
+import { SocketService } from 'src/socket/socket.service'
 
 @Injectable()
 export class PostService {
@@ -16,6 +17,7 @@ export class PostService {
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
+    private readonly socketService: SocketService,
   ) {}
 
   async create(createPostDto: CreatePostDto, userId: number) {
@@ -32,7 +34,7 @@ export class PostService {
     }
     if (!newPost)
       throw new BadRequestException('[post.service]: Cant create post')
-
+    this.socketService.sendPostUpdate(newPost)
     return await this.postRepository.save(newPost)
   }
 
@@ -42,7 +44,14 @@ export class PostService {
       order: {
         createdAt: 'DESC',
       },
-      relations: ['user', 'topic', 'comments', 'comments.user'],
+      relations: [
+        'user',
+        'topic',
+        'comments',
+        'comments.user',
+        'comments.parent',
+        'comments.parent.user',
+      ],
       loadEagerRelations: true,
       select: ['id', 'title', 'content', 'createdAt', 'updatedAt'],
     })
@@ -86,15 +95,16 @@ export class PostService {
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
-    const topicExists = await this.topicRepository.findOne({
-      where: { id: +updatePostDto.topic },
-    })
-    if (!topicExists)
-      throw new BadRequestException('[post.service]: No such topic')
+    // const topicExists = await this.topicRepository.findOne({
+    //   where: { id: +updatePostDto.topic },
+    // })
+    // if (!topicExists)
+    //   throw new BadRequestException('[post.service]: No such topic')
     const post = await this.postRepository.findOne({
       where: { id },
     })
     if (!post) throw new BadRequestException('[post.service]: Cant find post')
+    this.socketService.sendPostUpdate(updatePostDto)
     return await this.postRepository.update(id, updatePostDto)
   }
 
@@ -103,6 +113,7 @@ export class PostService {
       where: { id },
     })
     if (!post) throw new BadRequestException('[post.service]: Cant find post')
+    this.socketService.sendPostUpdate(post)
     return await this.postRepository.delete(id)
   }
 
@@ -126,31 +137,61 @@ export class PostService {
 
   async findByTitle(title: string) {
     const posts = await this.postRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
       where: {
         title: Like(`%${title}%`),
       },
-      relations: {
-        user: true,
-        topic: true,
-        comments: true,
-      },
+      relations: ['user', 'topic', 'comments', 'comments.user'],
+      loadEagerRelations: true,
+      select: ['id', 'title', 'content', 'createdAt', 'updatedAt'],
     })
-    return posts
+
+    const filteredPosts = posts.map((post) => ({
+      ...post,
+      comments: post.comments.map((comment) => ({
+        ...comment,
+        user: comment.user
+          ? { id: comment.user.id, username: comment.user.username }
+          : null,
+      })),
+    }))
+
+    return filteredPosts
   }
 
-  async findByTopics(topicIds: number[]) {
+  async findByTopics(topic: string) {
     const posts = await this.postRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
       where: {
         topic: {
-          id: In(topicIds),
+          title: topic,
         },
       },
-      relations: {
-        user: true,
-        topic: true,
-        comments: true,
-      },
+      relations: [
+        'user',
+        'topic',
+        'comments',
+        'comments.user',
+        'comments.parent',
+      ],
+      loadEagerRelations: true,
+      select: ['id', 'title', 'content', 'createdAt', 'updatedAt'],
     })
-    return posts
+
+    const filteredPosts = posts.map((post) => ({
+      ...post,
+      comments: post.comments.map((comment) => ({
+        ...comment,
+        user: comment.user
+          ? { id: comment.user.id, username: comment.user.username }
+          : null,
+      })),
+    }))
+
+    return filteredPosts
   }
 }

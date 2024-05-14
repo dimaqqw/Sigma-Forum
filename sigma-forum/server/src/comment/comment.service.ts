@@ -8,12 +8,15 @@ import { UpdateCommentDto } from './dto/update-comment.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Comment } from './entities/comment.entity'
 import { Repository } from 'typeorm'
+import { User } from 'src/user/entities/user.entity'
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto, userId: number) {
@@ -38,14 +41,22 @@ export class CommentService {
         )
       }
     }
+    const { username } = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    })
+
     const newComment = {
       content: content,
       parent: parentComment,
       post: post,
-      user: { id: userId },
+      user: { id: userId, username: username },
     }
     if (!newComment)
       throw new BadRequestException('[comment.service]: Cant create comment')
+    console.log(await this.commentRepository.save(newComment))
+
     return await this.commentRepository.save(newComment)
   }
 

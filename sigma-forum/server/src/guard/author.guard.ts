@@ -19,6 +19,7 @@ export class AuthorGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
     const { id, type } = request.params
+    console.log(request.route.path)
 
     let entity
 

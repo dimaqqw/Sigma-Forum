@@ -36,6 +36,9 @@ export class TopicService {
       relations: {
         user: true,
       },
+      order: {
+        title: 'ASC',
+      },
     })
   }
 

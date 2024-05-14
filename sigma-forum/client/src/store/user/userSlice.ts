@@ -7,12 +7,14 @@ import { IUser } from '../../types/types';
 interface UserState {
   user: IUser | null;
   isAuth: boolean;
+  isAdmin: boolean;
 }
 
 // Define the initial state using that type
 const initialState: UserState = {
   user: null,
   isAuth: false,
+  isAdmin: false,
 };
 
 export const userSlice = createSlice({
@@ -23,10 +25,14 @@ export const userSlice = createSlice({
     login: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
       state.isAuth = true;
+      state.isAdmin = action.payload.role === 'admin' ? true : false;
+      localStorage.setItem('isAdmin', state.isAdmin ? 'true' : 'false');
     },
     logout: (state) => {
       state.isAuth = false;
       state.user = null;
+      state.isAdmin = false;
+      localStorage.removeItem('isAdmin');
     },
   },
 });

@@ -51,6 +51,16 @@ export class PostController {
     return this.postService.findAll()
   }
 
+  @Get('/topic/:topic')
+  findByTopic(@Param('topic') title: string) {
+    return this.postService.findByTopics(title)
+  }
+
+  @Get(':title')
+  findByTitle(@Param('title') title: string) {
+    return this.postService.findByTitle(title)
+  }
+
   @Get(':type/:id')
   // @UseGuards(AuthorGuard)
   findOne(@Param('id') id: string) {

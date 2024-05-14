@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { AuthService } from '../services/auth.service';
 import { toast } from 'react-toastify';
-import { setTokenToLocalStorage } from '../helpers/localstorage.helpet';
+import { setTokenToLocalStorage } from '../helpers/localstorage.helper';
 import { useAppDispatch } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../store/user/userSlice';
@@ -59,9 +59,9 @@ const AuthPage: FC = () => {
 
   return (
     <>
-      <Header></Header>
-      <div className="mt-40 flex flex-col items-center justify-center text-black">
-        <h1 className="mb-10 text-center text-xl">
+      <Header onSearch={() => {}} isDisplay={false}></Header>
+      <div className=" m-auto mt-32 flex w-2/4 flex-col items-center justify-center rounded-3xl bg-zinc-600 pb-8 pt-8 text-white">
+        <h1 className="mb-10 text-center text-xl ">
           {!isLogin ? 'Login' : 'Registration'}
         </h1>
 
@@ -72,7 +72,7 @@ const AuthPage: FC = () => {
           {isLogin ? (
             <input
               type="text"
-              className="input "
+              className="input placeholder:text-white "
               placeholder="Username"
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -82,13 +82,13 @@ const AuthPage: FC = () => {
 
           <input
             type="email"
-            className="input"
+            className="input placeholder:text-white "
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
-            className="input"
+            className="input placeholder:text-white "
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -99,14 +99,14 @@ const AuthPage: FC = () => {
           {!isLogin ? (
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-black hover:text-black/50"
+              className=" text-neutral-300 hover:text-white"
             >
               You don`t have a account?
             </button>
           ) : (
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-black hover:text-black/50"
+              className=" text-neutral-300 hover:text-white"
             >
               Already have an account?
             </button>

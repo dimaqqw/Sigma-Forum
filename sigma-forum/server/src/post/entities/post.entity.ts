@@ -27,10 +27,10 @@ export class Post {
   @JoinColumn({ name: 'user_id' })
   user: User
 
-  @OneToMany(() => Comment, (comment) => comment.post)
+  @OneToMany(() => Comment, (comment) => comment.post, { onDelete: 'CASCADE' })
   comments: Comment[]
 
-  @ManyToOne(() => Topic, (topic) => topic.posts)
+  @ManyToOne(() => Topic, (topic) => topic.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'topic_id' })
   topic: Topic
 

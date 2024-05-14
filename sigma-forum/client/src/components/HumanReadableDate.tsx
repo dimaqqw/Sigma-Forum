@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 interface Props {
   dateString: string;
@@ -26,7 +26,7 @@ const HumanReadableDate: FC<Props> = (props: Props) => {
     humanReadableDate = `just now`;
   }
 
-  return <div>{humanReadableDate}</div>;
+  return <div className=" text-sm text-neutral-300">{humanReadableDate}</div>;
 };
 
 export default HumanReadableDate;

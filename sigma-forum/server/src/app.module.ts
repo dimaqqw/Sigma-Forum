@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module'
 import { PostModule } from './post/post.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { WebsocketGateway } from './websocket/websocket.gateway'
+import { SocketService } from './socket/socket.service'
 
 @Module({
   imports: [
@@ -34,6 +34,6 @@ import { WebsocketGateway } from './websocket/websocket.gateway'
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, WebsocketGateway],
+  providers: [AppService, SocketService],
 })
 export class AppModule {}

@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply text-sm;
+    @apply bg-zinc-400 text-sm text-white;
   }
   td {
     @apply capitalize text-white/70;
@@ -19,10 +19,10 @@
     @apply flex items-center gap-2 rounded-md px-4 py-2 text-white;
   }
   .input {
-    @apply rounded-md border border-slate-800 bg-slate-700 bg-transparent p-2 outline-none placeholder:text-black focus:border-slate-300;
+    @apply rounded-md border border-neutral-400 bg-slate-700 bg-transparent p-2 outline-none placeholder:text-white focus:border-slate-300;
   }
   .container {
-    @apply max-w-[1000px];
+    @apply ml-0 mr-0 flex w-screen justify-between;
   }
 }
 

@@ -13,6 +13,7 @@ export interface IUser {
   id: number;
   email: string;
   token: string;
+  role: string;
 }
 
 export interface IResponseUser {
@@ -23,6 +24,10 @@ export interface IResponseUser {
   createdAt: string;
   updatedAt: string;
   password: string;
+}
+export interface ReplyInfo {
+  postId: number | null;
+  parentId: number | null;
 }
 
 export interface IResponseUserData {
@@ -38,6 +43,7 @@ export interface IComment {
     id: number;
     username: string;
   };
+  parent: IComment;
 }
 
 export interface IPost {

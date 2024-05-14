@@ -1,10 +1,11 @@
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router/router';
 import { useAppDispatch } from './store/hooks';
-import { getTokenFromLocalStorage } from './helpers/localstorage.helpet';
+import { getTokenFromLocalStorage } from './helpers/localstorage.helper';
 import { AuthService } from './services/auth.service';
 import { login, logout } from './store/user/userSlice';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ function App() {
         }
       }
     } catch (error) {
-      console.log(error);
+      toast.error('Ошибка с авторизацией или токеном');
     }
   };
 
